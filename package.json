@@ -1,0 +1,29 @@
+{
+  "name": "using-graphql",
+  "version": "1.0.0",
+  "description": "I'm using graphQL for the first time",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "server" : "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HabibAroua/using-graphQL.git"
+  },
+  "author": "Habib AROUA",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/HabibAroua/using-graphQL/issues"
+  },
+  "homepage": "https://github.com/HabibAroua/using-graphQL#readme",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "express": "^4.17.1",
+    "express-graphql": "^0.12.0",
+    "graphql": "^15.4.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
