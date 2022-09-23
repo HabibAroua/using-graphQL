@@ -18,7 +18,14 @@ const RootQueryType = new GraphQLObjectType({
             description: 'Test field',
             resolve: ()=> {
                 return "Habib Aroua"
+            },
+        greet: {
+            type: GraphQLString,
+            description: 'Greet Field',
+            resolve: () =>{
+                return 'Welcome to GraphQL Learing'
             }
+        }
         }
     })
 })
