@@ -25,16 +25,44 @@ const books = [
     {id:6, name:'Perl Interview Question', authorId: 1},
     {id:7, name:'PHP Interview Question', authorId: 2},
     {id:8, name:'JavaScript Interview Question', authorId: 3},
-]
+];
+
+const AuthorType = new GraphQLObjectType({
+    name: 'AuthorType',
+    description: '',
+    fields: () => ({
+        id: {type: GraphQLInt},
+        name: { type: GraphQLString},
+        books: {
+            type: new GraphQLList(BookType),
+            description: 'List of all books by the author',
+            resolve: (author) => { // we will have to use filter , as the return type is list of BookType
+                return books.filter(b => b.authorId == author.id)
+            }
+        }
+    })
+});
+
 const BookType = new GraphQLObjectType({
     name: 'BookType',
     description: '',
     fields: () => ({
         id: {type: GraphQLInt},
         name: { type: GraphQLString},
-        authorId: { type: GraphQLInt}
+        authorId: { type: GraphQLInt},
+        authorName: {
+            type:GraphQLString,
+            description: '',
+            resolve:(book) => //it gives us the parent data
+            {
+                let author = authors.find(a =>a.id === book.authorId);
+                return author.name;
+            }
+        }
     })
-})
+});
+
+
 const RootQueryType = new GraphQLObjectType({
     name: '_rootQuery',
     description: 'Its a root query graph level',
@@ -59,6 +87,13 @@ const RootQueryType = new GraphQLObjectType({
             resolve: () => {
                 return books ;
             }
+        },
+        authors: {
+            type: new GraphQLList(AuthorType), // custom type will make later
+            description: 'List of Authors',
+            resolve: () => {
+                return authors ;
+            }
         }
     })
 })
@@ -75,3 +110,13 @@ app.use('/graphql', graphqlHTTP({
 app.listen(5000, ()=>{
     console.log('Server is listening on port 5000');
 })
+
+/* now we will have mutation operations like
+
+add new book
+update a book
+delete a book
+
+similarly with author
+
+*/
