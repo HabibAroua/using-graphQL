@@ -7,7 +7,8 @@ const {
     GraphQLString,
     GraphQLObject,
     GraphQLInt,
-    GraphQLList
+    GraphQLList,
+    GraphQLNonNull
 } = require('graphql');
 
 const authors = [
@@ -98,8 +99,54 @@ const RootQueryType = new GraphQLObjectType({
     })
 })
 
+const MutationType = new GraphQLObjectType({
+    name: "MutationOperations",
+    description: 'Mutation operations on books',
+    fields: () => ({
+        addBook: {
+            type: BookType,
+            description: '',
+            args: { //these are the arguments which will pass when with the addBopok query
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                authorId: { type:new GraphQLNonNull(GraphQLInt)}
+            },
+            resolve: (parent, args) => {
+                let newBook = { id: books.length + 1, name: args.name, authorId: args.authorId  }
+                books.push(newBook);
+                return newBook;
+            }
+        },
+        updateBook: {
+            type: BookType,
+            description: 'It will update a book bassed on given book id',
+            args: {
+                name: { type: new GraphQLNonNull(GraphQLString) },
+                id: { type: new GraphQLNonNull(GraphQLInt) }
+            },
+            resolve: (parent, args) => {
+                let book = books.find(b => b.id == args.id)
+                book.name = args.name
+                return book;
+            }
+        },
+        removeBook: {
+            type: GraphQLList(BookType),
+            description: 'It will remove a book bassed on given book id',
+            args: {
+                id: { type: GraphQLNonNull(GraphQLInt) }
+            },
+            resolve: (parent, args) => {
+                let book = books.filter(b=> b.id != args.id)
+                books = book;
+                return book;
+            }
+        }
+    })
+})
+
 const schema = new GraphQLSchema({
-    query: RootQueryType
+    query: RootQueryType,
+    mutation: MutationType
 })
 
 app.use('/graphql', graphqlHTTP({
@@ -110,13 +157,3 @@ app.use('/graphql', graphqlHTTP({
 app.listen(5000, ()=>{
     console.log('Server is listening on port 5000');
 })
-
-/* now we will have mutation operations like
-
-add new book
-update a book
-delete a book
-
-similarly with author
-
-*/
